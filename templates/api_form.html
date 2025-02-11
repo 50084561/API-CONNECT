@@ -1,0 +1,82 @@
+<div class="api-form">
+    <div class="url-section">
+        <div class="url-container">
+            <select id="method" class="method-select">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="DELETE">DELETE</option>
+            </select>
+            <input type="text" id="url" class="url-input" placeholder="https://api.example.com/endpoint">
+            <button id="sendRequest" class="btn">Send</button>
+            <button id="saveRequest" class="btn btn-secondary">Save</button>
+        </div>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="headers">Headers</button>
+        <button class="tab-btn" data-tab="body">Body</button>
+    </div>
+
+    <div class="editor-container active" id="headers-container">
+        <div class="editor-header">
+            <label>Headers</label>
+            <button class="btn-reset" onclick="resetHeaders()">Reset</button>
+        </div>
+        <div id="headers-editor" class="code-editor"></div>
+    </div>
+    
+    <div class="editor-container" id="body-container">
+        <div class="editor-header">
+            <label>Request Body</label>
+            <button class="btn-reset" onclick="resetBody()">Reset</button>
+        </div>
+        <div id="body-editor" class="code-editor"></div>
+    </div>
+</div>
+
+<!-- Save Request Modal -->
+<div id="saveRequestModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Save Request</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="requestName">Request Name</label>
+                <input type="text" id="requestName" class="form-control" placeholder="My API Request">
+            </div>
+            <div class="form-group">
+                <label for="collectionId">Collection</label>
+                <select id="collectionId" class="form-control">
+                    {% for collection in collections %}
+                    <option value="{{ collection.id }}">{{ collection.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="confirmSave" class="btn">Save</button>
+            <button class="btn btn-secondary modal-close">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div class="response-section">
+    <h2>Response</h2>
+    <div id="responseStatus"></div>
+    <div id="responseHeaders"></div>
+    <pre id="responseBody"></pre>
+</div>
+
+<!-- Add CodeMirror with all required packages -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/ayu-dark.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.24.1/prism.min.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
