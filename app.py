@@ -50,14 +50,50 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        user = User(
-            username=request.form['username'],
-            email=request.form['email']
-        )
-        user.set_password(request.form['password'])
-        db.session.add(user)
-        db.session.commit()
-        return redirect(url_for('login'))
+        try:
+            username = request.form['username']
+            email = request.form['email']
+            password = request.form['password']
+            confirm_password = request.form['confirm_password']
+
+            # Validation checks
+            if not all([username, email, password, confirm_password]):
+                flash(f'All fields are required', 'error')
+                return render_template('auth/register.html')
+
+            if password != confirm_password:
+                flash(f'Passwords do not match', 'error')
+                return render_template('auth/register.html')
+
+            # Check for existing username
+            existing_user = User.query.filter_by(username=username).first()
+            if existing_user:
+                flash(f'Username already exists. Please choose a different username.', 'error')
+                return render_template('auth/register.html')
+
+            # Check for existing email
+            existing_email = User.query.filter_by(email=email).first()
+            if existing_email:
+                flash(f'Email already registered. Please use a different email.', 'error')
+                return render_template('auth/register.html')
+
+            # Create new user
+            user = User(
+                username=username,
+                email=email
+            )
+            user.set_password(password)
+            
+            # Save to database
+            db.session.add(user)
+            db.session.commit()
+            
+            flash(f'Registration successful! Please login.', 'success')
+            return redirect(url_for('auth.login'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred during registration: {str(e)}', 'error')        
     return render_template('auth/register.html')
 
 @app.route('/dashboard')
