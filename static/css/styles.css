@@ -1,17 +1,84 @@
+/* Base styles */
 :root {
-    --primary-color: #6366f1;
-    --primary-hover: #4f46e5;
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
     --bg-color: #ffffff;
     --text-color: #1f2937;
     --border-color: #e5e7eb;
-    --sidebar-bg: #f8fafc;
+    --sidebar-bg: rgba(255, 255, 255, 0.95);
+    --card-bg: #ffffff;
+    --hover-bg: rgba(0, 0, 0, 0.04);
+    --code-bg: #f3f4f6;
+    --editor-bg: #f8fafc;
+    --editor-text: #1f2937;
+    --primary-color-light: rgba(var(--primary-rgb), 0.1);
+    --primary-color-dark: rgba(var(--primary-rgb), 0.8);
+    --primary-color-shadow: rgba(var(--primary-rgb), 0.2);
+    --text-muted: #64748b;
+    --primary-rgb: 37, 99, 235;
+    --primary-color-light: rgba(37, 99, 235, 0.1);
+    --primary-color-dark: rgba(37, 99, 235, 0.8);
+    --primary-color-shadow: rgba(37, 99, 235, 0.2);
+    --hover-bg: rgba(0, 0, 0, 0.04);
 }
 
+/* Dark theme */
 [data-theme="dark"] {
+    --primary-color: #3b82f6;
+    --primary-hover: #60a5fa;
     --bg-color: #111827;
     --text-color: #f3f4f6;
     --border-color: #374151;
-    --sidebar-bg: #1f2937;
+    --sidebar-bg: rgba(30, 30, 30, 0.95);
+    --card-bg: #1f2937;
+    --hover-bg: rgba(255, 255, 255, 0.05);
+    --code-bg: #111827;
+    --editor-bg: #1a1a1a;
+    --editor-text: #e5e7eb;
+    --text-muted: #94a3b8;
+    --hover-bg: rgba(255, 255, 255, 0.05);
+    --primary-color-light: rgba(59, 130, 246, 0.1);
+    --primary-color-dark: rgba(59, 130, 246, 0.8);
+    --primary-color-shadow: rgba(59, 130, 246, 0.2);
+}
+
+.import-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.import-btn:hover {
+    background-color: #45a049;
+}
+
+.nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.history-btn,
+.import-btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    border: none;
+    transition: background-color 0.2s;
+    color: white;
+}
+
+.history-btn {
+    background-color: #007bff;
+}
+
+.history-btn:hover {
+    background-color: #0056b3;
 }
 
 body {
@@ -23,49 +90,18 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
+/* Layout */
 .layout {
-    display: grid;
-    grid-template-columns: 250px 1fr;
+    display: flex;
     min-height: 100vh;
 }
 
-.sidebar {
-    background-color: var(--sidebar-bg);
-    padding: 1.5rem;
-    border-right: 1px solid var(--border-color);
-}
+/* Sidebar */
 
-.sidebar-header {
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
-}
 
-.sidebar-header h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-.main-content {
-    padding: 2rem;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.api-form {
-    display: grid;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
+/* Forms */
 .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .form-group label {
@@ -74,13 +110,10 @@ body {
 }
 
 .form-control {
-    padding: 0.75rem;
+    width: 100%;
+    padding: 0.5rem;
     border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-size: 0.875rem;
-    transition: border-color 0.2s;
+    border-radius: 0.375rem;
 }
 
 .form-control:focus {
@@ -89,13 +122,11 @@ body {
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
 }
 
+/* Buttons */
 .btn {
-    padding: 0.75rem 1.5rem;
-    background-color: var(--primary-color);
-    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
     border: none;
-    border-radius: 0.5rem;
-    font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s;
 }
@@ -339,9 +370,9 @@ body {
 .tabs {
     display: flex;
     gap: 0.5rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
     border-bottom: 1px solid var(--border-color);
-    padding-bottom: 0.5rem;
+    padding: 0.5rem;
 }
 
 .tab-btn {
@@ -353,16 +384,18 @@ body {
     font-size: 0.875rem;
     opacity: 0.7;
     transition: all 0.2s;
+    border-radius: 0.375rem;
 }
 
 .tab-btn:hover {
     opacity: 1;
+    background: var(--hover-bg);
 }
 
 .tab-btn.active {
     opacity: 1;
-    color: var(--primary-color);
-    box-shadow: 0 2px 0 var(--primary-color);
+    background: var(--primary-color);
+    color: white;
 }
 
 .tab-content {
@@ -373,30 +406,32 @@ body {
     display: block;
 }
 
+/* Editor container styles */
 .editor-container {
-    display: none;
+    margin-bottom: 1.5rem;
     border: 1px solid var(--border-color);
     border-radius: 0.5rem;
     overflow: hidden;
-    margin-bottom: 1.5rem;
-}
-
-.editor-container.active {
-    display: block;
+    background-color: var(--editor-bg);
 }
 
 .editor-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem;
-    background-color: var(--sidebar-bg);
+    padding: 0.75rem 1rem;
+    background-color: var(--card-bg);
     border-bottom: 1px solid var(--border-color);
+}
+
+.editor-container.active {
+    display: block;
 }
 
 .editor-header label {
     font-weight: 500;
     font-size: 0.875rem;
+    color: var(--text-color);
 }
 
 .btn-reset {
@@ -415,7 +450,8 @@ body {
 }
 
 .code-editor {
-    min-height: 200px;
+    position: relative;
+    height: 200px;
 }
 
 /* CodeMirror customizations */
@@ -423,17 +459,49 @@ body {
     height: 200px !important;
     font-family: 'Fira Code', monospace;
     font-size: 0.875rem;
-    background-color: var(--bg-color) !important;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    background-color: var(--editor-bg) !important;
 }
 
-[data-theme="dark"] .CodeMirror {
-    border-color: var(--border-color);
+.CodeMirror-focused {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+}
+
+.CodeMirror-selected { 
+    background-color: var(--primary-color) !important;
+    opacity: 0.2;
+}
+
+.CodeMirror-line {
+    padding: 0 0.5rem !important;
+}
+
+.CodeMirror-linenumber {
+    color: var(--text-color) !important;
+    opacity: 0.5;
 }
 
 .CodeMirror-gutters {
-    background-color: var(--sidebar-bg) !important;
     border-right: 1px solid var(--border-color) !important;
+    background-color: var(--editor-bg) !important;
 }
+
+.cm-s-ayu-dark {
+    background-color: var(--editor-bg) !important;
+}
+
+.cm-s-ayu-dark .CodeMirror-cursor {
+    border-left: 2px solid var(--primary-color) !important;
+}
+
+.cm-s-ayu-dark .cm-string { color: #c2d94c; }
+.cm-s-ayu-dark .cm-number { color: #ff8f40; }
+.cm-s-ayu-dark .cm-property { color: #39bae6; }
+.cm-s-ayu-dark .cm-atom { color: #ff8f40; }
+.cm-s-ayu-dark .cm-keyword { color: #ff8f40; }
+.cm-s-ayu-dark .cm-punctuation { color: #e6b673; }
 
 .response-status {
     padding: 0.75rem;
@@ -472,6 +540,7 @@ body {
     font-size: 0.875rem;
 }
 
+/* Modals */
 .modal {
     display: none;
     position: fixed;
@@ -479,14 +548,13 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
 }
 
 .modal.active {
     display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
@@ -824,4 +892,39 @@ body {
 .btn-link:hover {
     background: none;
     color: var(--primary-hover);
+}
+
+.sidebar-nav {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Navigation */
+.nav-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    color: inherit;
+    text-decoration: none;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link svg {
+    opacity: 0.7;
 }

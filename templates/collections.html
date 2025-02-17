@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% from "macros/modals.html" import collection_modals %}
+
+{% block title %}Collections - API Connect{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/collections.css') }}">
+{% endblock %}
+
+{% block header %}
+<h1>Collections</h1>
+{% endblock %}
+
+{% block content %}
+<div class="header-actions">
+    <button id="newCollectionBtn" class="btn btn-primary">New Collection</button>
+    <button id="importCollectionBtn" class="btn btn-secondary">Import Collection</button>
+</div>
+
+{% if collections %}
+<div class="collections-grid">
+    {% for collection in collections %}
+    <div class="collection-card" data-id="{{ collection.id }}">
+        <div class="collection-header">
+            <h3>{{ collection.name }}</h3>
+            <span class="timestamp">Created {{ collection.created_at.strftime('%Y-%m-%d') }}</span>
+        </div>
+        
+        <div class="collection-stats">
+            <div class="stat-item">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                <span>{{ collection.apis|default([])|length }} APIs</span>
+            </div>
+            <div class="stat-item">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Last updated {{ collection.updated_at.strftime('%Y-%m-%d') if collection.updated_at else collection.created_at.strftime('%Y-%m-%d') }}</span>
+            </div>
+        </div>
+        
+        <div class="collection-actions">
+            <a href="{{ url_for('view_collection', id=collection.id) }}" class="btn btn-small">View</a>
+            <button class="btn btn-icon export-collection" data-id="{{ collection.id }}" title="Export Collection">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+            </button>
+            <button class="btn btn-icon delete-collection" data-id="{{ collection.id }}" title="Delete Collection">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="collection-empty">
+    <h3>No Collections Yet</h3>
+    <p>Create your first collection to start organizing your APIs</p>
+    <button id="emptyNewCollectionBtn" class="btn">Create Collection</button>
+</div>
+{% endif %}
+
+<!-- Include modals -->
+{% include 'partials/collection_modals.html' %}
+{{ collection_modals() }}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/collections.js') }}"></script>
+{% endblock %}

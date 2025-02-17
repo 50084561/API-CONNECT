@@ -21,6 +21,7 @@ class Collection(db.Model):
     name = db.Column(db.String(100), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     apis = db.relationship('API', backref='collection', lazy=True, cascade='all, delete-orphan')
     
     def to_dict(self):
@@ -41,6 +42,8 @@ class Collection(db.Model):
         return collection
 
 class API(db.Model):
+    __tablename__ = 'api'  # Add this line to specify lowercase table name
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     url = db.Column(db.Text, nullable=False)

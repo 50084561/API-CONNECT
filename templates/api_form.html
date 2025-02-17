@@ -13,23 +13,18 @@
         </div>
     </div>
     
-    <div class="tabs">
-        <button class="tab-btn active" data-tab="headers">Headers</button>
-        <button class="tab-btn" data-tab="body">Body</button>
-    </div>
-
-    <div class="editor-container active" id="headers-container">
+    <div class="editor-container">
         <div class="editor-header">
             <label>Headers</label>
-            <button class="btn-reset" onclick="resetHeaders()">Reset</button>
+            <button type="button" class="btn-reset">Reset</button>
         </div>
         <div id="headers-editor" class="code-editor"></div>
     </div>
     
-    <div class="editor-container" id="body-container">
+    <div class="editor-container">
         <div class="editor-header">
             <label>Request Body</label>
-            <button class="btn-reset" onclick="resetBody()">Reset</button>
+            <button type="button" class="btn-reset">Reset</button>
         </div>
         <div id="body-editor" class="code-editor"></div>
     </div>

@@ -1,48 +1,55 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize editors with proper height and theme
-    const defaultHeaders = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-    };
+class APIConnect {
+    constructor() {
+        this.defaultHeaders = {
+            'Content-Type': 'application/json'
+        };
+        this.defaultBody = {};
+        this.initializeEditors();
+        this.setupEventListeners();
+    }
 
-    const headersEditor = CodeMirror(document.getElementById('headers-editor'), {
-        mode: { name: 'javascript', json: true },
-        theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'ayu-dark' : 'default',
-        lineNumbers: true,
-        autoCloseBrackets: true,
-        matchBrackets: true,
-        tabSize: 2,
-        lineWrapping: true,
-        height: "200px",
-        value: JSON.stringify(defaultHeaders, null, 2)
-    });
+    initializeEditors() {
+        this.headersEditor = CodeMirror(document.getElementById('headers-editor'), {
+            mode: 'application/json',
+            theme: 'ayu-dark',
+            lineNumbers: true,
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            tabSize: 2,
+            value: JSON.stringify(this.defaultHeaders, null, 2)
+        });
 
-    const bodyEditor = CodeMirror(document.getElementById('body-editor'), {
-        mode: { name: 'javascript', json: true },
-        theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'ayu-dark' : 'default',
-        lineNumbers: true,
-        autoCloseBrackets: true,
-        matchBrackets: true,
-        tabSize: 2,
-        lineWrapping: true,
-        height: "200px",
-        value: JSON.stringify({}, null, 2)
-    });
+        this.bodyEditor = CodeMirror(document.getElementById('body-editor'), {
+            mode: 'application/json',
+            theme: 'ayu-dark',
+            lineNumbers: true,
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            tabSize: 2,
+            value: JSON.stringify(this.defaultBody, null, 2)
+        });
+    }
 
-    // Refresh editors after initialization
-    setTimeout(() => {
-        headersEditor.refresh();
-        bodyEditor.refresh();
-    }, 100);
+    setupEventListeners() {
+        document.getElementById('sendRequest')?.addEventListener('click', () => this.sendRequest());
+        document.getElementById('saveRequest')?.addEventListener('click', () => this.saveRequest());
 
-    // Send request handler
-    const sendRequest = async () => {
+        document.querySelectorAll('.btn-reset').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const editorType = button.closest('.editor-container').querySelector('label').textContent.toLowerCase();
+                this.resetEditor(editorType);
+            });
+        });
+    }
+
+    async sendRequest() {
         const url = document.getElementById('url').value;
         const method = document.getElementById('method').value;
-        
+
         try {
-            let headers = JSON.parse(headersEditor.getValue());
-            let body = JSON.parse(bodyEditor.getValue());
+            let headers = JSON.parse(this.headersEditor.getValue());
+            let body = JSON.parse(this.bodyEditor.getValue());
 
             const response = await fetch('/test-api', {
                 method: 'POST',
@@ -58,8 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const data = await response.json();
-            
-            // Display response
+
             document.getElementById('responseStatus').innerHTML = `
                 <div class="response-status ${data.status < 400 ? 'success' : 'error'}">
                     ${data.status} ${data.statusText}
@@ -79,83 +85,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="response-status error">Error: ${error.message}</div>
             `;
         }
-    };
+    }
 
-    // Add event listener to send button
-    document.getElementById('sendRequest').addEventListener('click', sendRequest);
-
-    // Add tab switching logic
-    const tabs = document.querySelectorAll('.tab-btn');
-    const editors = document.querySelectorAll('.editor-container');
-
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            editors.forEach(e => e.classList.remove('active'));
-            
-            tab.classList.add('active');
-            document.getElementById(`${tab.dataset.tab}-container`).classList.add('active');
-            
-            if (tab.dataset.tab === 'headers') headersEditor.refresh();
-            if (tab.dataset.tab === 'body') bodyEditor.refresh();
-        });
-    });
-
-    // Reset functions
-    window.resetHeaders = () => {
-        headersEditor.setValue(JSON.stringify(defaultHeaders, null, 2));
-    };
-
-    window.resetBody = () => {
-        bodyEditor.setValue(JSON.stringify({}, null, 2));
-    };
-
-    // Theme change handler
-    const updateEditorsTheme = (isDark) => {
-        const theme = isDark ? 'ayu-dark' : 'default';
-        headersEditor.setOption('theme', theme);
-        bodyEditor.setOption('theme', theme);
-    };
-
-    // Listen for theme changes
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.attributeName === 'data-theme') {
-                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-                updateEditorsTheme(isDark);
-            }
-        });
-    });
-
-    observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['data-theme']
-    });
-
-    // Save Request Modal
-    const saveRequestBtn = document.getElementById('saveRequest');
-    const modal = document.getElementById('saveRequestModal');
-    const confirmSaveBtn = document.getElementById('confirmSave');
-    const closeButtons = document.querySelectorAll('.modal-close');
-
-    saveRequestBtn.addEventListener('click', () => {
-        modal.classList.add('active');
-    });
-
-    closeButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            modal.classList.remove('active');
-        });
-    });
-
-    confirmSaveBtn.addEventListener('click', async () => {
+    async saveRequest() {
         const requestData = {
             name: document.getElementById('requestName').value,
             collection_id: document.getElementById('collectionId').value,
             url: document.getElementById('url').value,
             method: document.getElementById('method').value,
-            headers: JSON.parse(headersEditor.getValue()),
-            body: JSON.parse(bodyEditor.getValue())
+            headers: JSON.parse(this.headersEditor.getValue()),
+            body: JSON.parse(this.bodyEditor.getValue())
         };
 
         try {
@@ -168,90 +107,48 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                modal.classList.remove('active');
-                showNotification('Request saved successfully!', 'success');
+                document.getElementById('saveRequestModal').classList.remove('active');
+                this.showNotification('Request saved successfully!', 'success');
             } else {
                 throw new Error('Failed to save request');
             }
         } catch (error) {
-            showNotification(error.message, 'error');
+            this.showNotification(error.message, 'error');
         }
-    });
+    }
 
-    // Notification function
-    function showNotification(message, type) {
+    closeModals() {
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.classList.remove('active');
+        });
+    }
+
+    showNotification(message, type) {
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         notification.textContent = message;
-        document.body.appendChild(notification);
+        document.querySelector('.notifications')?.appendChild(notification);
 
         setTimeout(() => {
-            notification.remove();
+            notification.style.opacity = '0';
+            setTimeout(() => notification.remove(), 300);
         }, 3000);
     }
 
-    // Import form handling
-    const importForm = document.getElementById('importForm');
-    if (importForm) {
-        importForm.addEventListener('submit', function(e) {
-            const fileInput = document.getElementById('api_file');
-            if (!fileInput.files.length) {
-                e.preventDefault();
-                showNotification('Please select a file to import', 'error');
-                return;
-            }
-
-            const file = fileInput.files[0];
-            const allowedTypes = [
-                'application/json',
-                'text/yaml',
-                'application/x-yaml',
-                'text/x-yaml'
-            ];
-
-            if (!file.name.match(/\.(json|yaml|yml)$/) || 
-                !allowedTypes.includes(file.type)) {
-                e.preventDefault();
-                showNotification('Please upload a valid JSON or YAML file', 'error');
-                return;
-            }
-        });
-    }
-
-    function closeImportModal() {
-        const modal = document.getElementById('importModal');
-        if (modal) {
-            modal.classList.remove('active');
+    resetEditor(type) {
+        if (type.includes('headers')) {
+            this.headersEditor.setValue(JSON.stringify(this.defaultHeaders, null, 2));
+        } else if (type.includes('body')) {
+            this.bodyEditor.setValue(JSON.stringify(this.defaultBody, null, 2));
         }
     }
+}
 
-    // Add file type validation
-    document.getElementById('api_file')?.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file && !file.name.match(/\.(json|yaml|yml)$/)) {
-            showNotification('Please select a JSON or YAML file', 'error');
-            e.target.value = '';
-        }
-    });
-
-    // Import API Modal
-    const importApiBtn = document.getElementById('importApiBtn');
-    const importModal = document.getElementById('importModal');
-
-    if (importApiBtn && importModal) {
-        importApiBtn.addEventListener('click', () => {
-            importModal.classList.add('active');
-        });
-
-        // Close import modal when clicking close button or outside
-        importModal.querySelector('.modal-close').addEventListener('click', () => {
-            importModal.classList.remove('active');
-        });
-
-        window.addEventListener('click', (e) => {
-            if (e.target === importModal) {
-                importModal.classList.remove('active');
-            }
-        });
-    }
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    window.apiConnect = new APIConnect();
 });
+
+// Remove the global functions and use the class methods instead
+window.resetHeaders = () => window.apiConnect.resetEditor('headers');
+window.resetBody = () => window.apiConnect.resetEditor('body');
