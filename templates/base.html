@@ -32,7 +32,7 @@
                         </svg>
                     </button>
                     {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
+                        <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">Logout</a>
                     {% endif %}
                 </div>
             </header>

@@ -30,11 +30,11 @@ def check_db_tables():
 # Initialize database tables
 check_db_tables()
 
-@app.errorhandler(Exception)
-def handle_error(error):
-    logger.error(f'Unhandled error: {error}', exc_info=True)
-    flash('An unexpected error occurred', 'error')
-    return redirect(url_for('auth.login'))
+# @app.errorhandler(Exception)
+# def handle_error(error):
+#     logger.error(f'Unhandled error: {error}', exc_info=True)
+#     flash('An unexpected error occurred', 'error')
+#     return redirect(url_for('auth.login'))
 
 @app.route('/')
 def index():

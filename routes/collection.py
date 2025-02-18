@@ -4,15 +4,15 @@ from models import Collection, API
 from extensions import db
 import json
 
-collection_bp = Blueprint('collection', __name__, url_prefix='/collection')
+collection_bp = Blueprint('collection', __name__)
 
-@collection_bp.route('dashboard')
+@collection_bp.route('/dashboard')
 @login_required
 def dashboard():
     collections = Collection.query.filter_by(user_id=current_user.id).all()
     return render_template('dashboard.html', collections=collections)
 
-@collection_bp.route('new', methods=['POST'])
+@collection_bp.route('/new', methods=['POST'])
 @login_required
 def create_collection():
     try:
@@ -30,7 +30,7 @@ def create_collection():
         
     return redirect(url_for('collection.dashboard'))
 
-@collection_bp.route('<int:id>')
+@collection_bp.route('/<int:id>')
 @login_required
 def view_collection(id):
     collection = Collection.query.get_or_404(id)
@@ -41,7 +41,7 @@ def view_collection(id):
     apis = API.query.filter_by(collection_id=id).all()
     return render_template('collection.html', collection=collection, apis=apis)
 
-@collection_bp.route('<int:id>/delete', methods=['POST'])
+@collection_bp.route('/<int:id>/delete', methods=['POST'])
 @login_required
 def delete_collection(id):
     try:
@@ -62,7 +62,7 @@ def delete_collection(id):
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
-@collection_bp.route('<int:id>/export')
+@collection_bp.route('/<int:id>/export')
 @login_required
 def export_collection(id):
     collection = Collection.query.get_or_404(id)
@@ -86,7 +86,7 @@ def export_collection(id):
     
     return jsonify(export_data)
 
-@collection_bp.route('import', methods=['POST'])
+@collection_bp.route('/import', methods=['POST'])
 @login_required
 def import_collection():
     if 'collection_file' not in request.files:
@@ -131,7 +131,7 @@ def import_collection():
     
     return redirect(url_for('collection.dashboard'))
 
-@collection_bp.route('collections')
+@collection_bp.route('/collections')
 @login_required
 def collections():
     collections = Collection.query.filter_by(user_id=current_user.id).all()
