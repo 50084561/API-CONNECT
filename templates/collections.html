@@ -42,7 +42,7 @@
         </div>
         
         <div class="collection-actions">
-            <a href="{{ url_for('view_collection', id=collection.id) }}" class="btn btn-small">View</a>
+            <a href="{{ url_for('collection.view_collection', id=collection.id) }}" class="btn btn-small">View</a>
             <button class="btn btn-icon export-collection" data-id="{{ collection.id }}" title="Export Collection">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4 4m0 0l-4-4m4 4V4"/>

@@ -14,13 +14,13 @@
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
+                <a href="{{ url_for('collection.collections') }}" class="nav-link {{ 'active' if request.endpoint == 'collection.collections' }}" data-title="Collections">
+                    <i class="fas fa-folder"></i>
+                    <span>Collections</span>
+                </a>
                 <a href="{{ url_for('history.history') }}" class="nav-link {{ 'active' if request.endpoint == 'history.history' }}" data-title="History">
                     <i class="fas fa-history"></i>
                     <span>History</span>
-                </a>
-                <a href="{{ url_for('auth.logout') }}" class="nav-link" data-title="Logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
                 </a>
                 <button class="nav-link" id="importApiBtn" data-title="Import API">
                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,6 +37,11 @@
             </div>
         </nav>
 
-        
+        <div class="sidebar-footer">
+            <a href="{{ url_for('auth.logout') }}" class="nav-link" data-title="Logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
     </div>
 </div>
