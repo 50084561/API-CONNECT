@@ -1,0 +1,52 @@
+{% macro collection_modals() %}
+<!-- New Collection Modal -->
+<div id="newCollectionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>New Collection</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <form action="{{ url_for('collection.create_collection') }}" method="POST">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="collectionName">Collection Name</label>
+                    <input type="text" id="collectionName" name="name" class="form-control" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn">Create</button>
+                <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Import Collection Modal -->
+<div id="importCollectionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Import Collection</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="importCollectionForm" action="{{ url_for('collection.import_collection') }}" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="collection_file">Select Collection File</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="collection_file" name="collection_file" accept=".json" required>
+                        <div class="file-input-info">
+                            Supported format: JSON
+                            <br>
+                            <small>Import your API collections</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Import</button>
+                    <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endmacro %}

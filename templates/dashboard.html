@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - API Connect{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/ayu-dark.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block header %}
+<h1>Welcome back, {{ current_user.username }}</h1>
+{% endblock %}
+
+{% block content %}
+{% include 'api_form.html' %}
+
+<!-- Modals -->
+<div id="newCollectionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>New Collection</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <form action="{{ url_for('collection.create_collection') }}" method="POST">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="collectionName">Collection Name</label>
+                    <input type="text" id="collectionName" name="name" class="form-control" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn">Create</button>
+                <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="importCollectionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Import Collection</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="importCollectionForm" action="{{ url_for('collection.import_collection') }}" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="collection_file">Select Collection File</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="collection_file" name="collection_file" accept=".json" required>
+                        <div class="file-input-info">
+                            Supported format: JSON
+                            <br>
+                            <small>Import your API collections</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Import</button>
+                    <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="importModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Import API</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="importForm" action="{{ url_for('api.import_api') }}" method="POST" enctype="multipart/form-data">
+                <div class="tabs">
+                    <button type="button" class="tab-btn active" data-tab="file">Import File</button>
+                    <button type="button" class="tab-btn" data-tab="single">Single API</button>
+                </div>
+
+                <div class="tab-content active" id="file-tab">
+                    <div class="form-group">
+                        <label for="api_file">Select Specification File</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="api_file" name="api_file" accept=".json,.yaml,.yml">
+                            <div class="file-input-info">
+                                Supported formats: JSON, YAML
+                                <br>
+                                <small>OpenAPI/Swagger specifications supported</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="single-tab">
+                    <div class="form-group">
+                        <label for="api_name">API Name</label>
+                        <input type="text" id="api_name" name="api_name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="api_method">Method</label>
+                        <select id="api_method" name="api_method" class="form-control">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="PATCH">PATCH</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="api_url">URL</label>
+                        <input type="text" id="api_url" name="api_url" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="collection_id">Save to Collection</label>
+                    <select id="collection_id" name="collection_id" class="form-control">
+                        <option value="">Create New Collection</option>
+                        {% for collection in collections %}
+                        <option value="{{ collection.id }}">{{ collection.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">Import</button>
+                    <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                    <a href="{{ url_for('api.export_api_template') }}" class="btn btn-link">Download Template</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="exportApiModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Export API Specification</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="exportApiForm" action="{{ url_for('api.export_api') }}" method="POST">
+                <div class="form-group">
+                    <label for="export_collection">Select Collection</label>
+                    <select id="export_collection" name="collection_id" class="form-control" required>
+                        {% for collection in collections %}
+                        <option value="{{ collection.id }}">{{ collection.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="export_format">Export Format</label>
+                    <select id="export_format" name="format" class="form-control">
+                        <option value="openapi">OpenAPI/Swagger</option>
+                        <option value="postman">Postman Collection</option>
+                        <option value="curl">cURL Commands</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">Export</button>
+                    <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
